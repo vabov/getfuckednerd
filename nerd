@@ -1,1 +1,114 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Type in Red</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      display: flex;
+      gap: 24px;
+      padding: 40px;
+      align-items: start;
+      background: #f7f7f8;
+      color: #111;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      max-width: 520px;
+      width: 100%;
+    }
+
+    label { display:block; margin-bottom:8px; font-weight:600; }
+
+    /* input and textarea text will appear red */
+    input[type="text"],
+    textarea,
+    .editable {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.4;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      outline: none;
+      color: #c40000; /* red text color */
+      caret-color: #c40000;
+      background: #fff;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    .editable:focus {
+      border-color: #c0c0c0;
+      box-shadow: 0 0 0 4px rgba(196,0,0,0.06);
+    }
+
+    textarea { min-height: 100px; resize: vertical; }
+
+    .preview {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px dashed #eee;
+      color: #c40000; /* preview text also red */
+      background: #fffdfd;
+      min-height: 46px;
+      white-space: pre-wrap;
+    }
+
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width:100%; }
+    @media (max-width:700px) { .cols { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <label for="single">Type here (input)</label>
+    <input id="single" type="text" placeholder="Type something — it will appear in red" autofocus>
+    <div class="preview" id="previewSingle" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <label for="multi">Or type here (editable area)</label>
+    <div id="multi" class="editable" contenteditable="true" role="textbox" aria-multiline="true"
+         placeholder="Click and type — text will be red"></div>
+    <div class="preview" id="previewMulti" aria-live="polite"></div>
+  </div>
+
+  <script>
+    // Mirror typed text into the preview areas so you can see exactly what's being typed.
+    const input = document.getElementById('single');
+    const previewSingle = document.getElementById('previewSingle');
+    const editable = document.getElementById('multi');
+    const previewMulti = document.getElementById('previewMulti');
+
+    // Update preview as user types (handles input and paste)
+    function updatePreviewSingle() {
+      previewSingle.textContent = input.value;
+    }
+    input.addEventListener('input', updatePreviewSingle);
+
+    // contenteditable: update preview and preserve line breaks
+    function updatePreviewMulti() {
+      // Use textContent to avoid injecting HTML
+      previewMulti.textContent = editable.textContent;
+    }
+    editable.addEventListener('input', updatePreviewMulti);
+
+    // Initialize previews
+    updatePreviewSingle();
+    updatePreviewMulti();
+
+    // Help: focus editable area on first click of the placeholder region
+    editable.addEventListener('focus', () => {
+      // no-op currently, but keeps behavior smooth
+    });
+  </script>
+</body>
+</html>
